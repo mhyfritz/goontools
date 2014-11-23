@@ -9,4 +9,6 @@
 #include "goonsort.h"
 #include "goonview.h"
 
+typedef int (*Subcommand)(int, char**);
+
 #endif

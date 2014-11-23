@@ -6,31 +6,51 @@ void usage(char* prog)
     printf("Usage: %s <subcommand> <subcommand arguments>\n", prog);
     printf("\n");
     printf("subcommands:\n");
-    printf("    index\tindex file\n");
-    printf("    sort\tsort file\n");
-    printf("    view\tview/slice file\n");
+    printf("    index    index file\n");
+    printf("    sort     sort file\n");
+    printf("    view     view/slice file\n");
     printf("\n");
+}
+
+int dispatch(int argc, char *argv[])
+{
+    char *subcommands[] = {
+        "index",
+        "view",
+        "sort",
+        NULL // sentinel
+    };
+    Subcommand dispatch[] = {
+        &goonindex,
+        &goonview,
+        &goonsort
+    };
+    char **s;
+
+    for (s = subcommands; *s != NULL; s += 1) {
+        if (strcmp(argv[1], *s) == 0) {
+            break;
+        }
+    }
+
+    if (*s == NULL) {
+        usage(argv[0]);
+        return -1;
+    }
+
+    return dispatch[s-subcommands](argc-2, argv+2);
 }
 
 int main(int argc, char *argv[])
 {
-    int ret;
-
     if (argc == 1) {
         usage(argv[0]);
         return EXIT_FAILURE;
     }
 
-    if (strcmp(argv[1], "index") == 0) {
-        ret = goonindex(argc-2, argv+2); 
-    } else if (strcmp(argv[1], "view") == 0) {
-        ret = goonview(argc-2, argv+2);
-    } else if (strcmp(argv[1], "sort") == 0) {
-        ret = goonsort(argc-2, argv+2);
-    } else {
-        usage(argv[0]);
-        ret = -1;
+    if (dispatch(argc, argv) != 0) {
+        return EXIT_FAILURE;
     }
 
-    return ret == 0 ? EXIT_SUCCESS : EXIT_FAILURE;
+    return EXIT_SUCCESS;
 }
