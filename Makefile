@@ -8,13 +8,18 @@ LDFLAGS = -lz
 
 SRC = $(wildcard *.c)
 OBJ = $(SRC:.c=.o)
+GOONSUBSRC = $(filter-out $(PROG).c,$(wildcard goon*.c))
+PROTO = $(GOONSUBSRC:.c=.p)
 
 .PHONY: all clean
 
-all: $(PROG)
+all: $(PROTO) $(PROG)
 
 $(PROG): $(OBJ)
 	$(LD) $(LDFLAGS) -o $(PROG) $(OBJ)
 
+$(PROTO): %.p: %.c
+	perl -ne 'm,^(?!static|[#{}\s/*]), && chomp && print "$$_;\n"' $< > $@
+
 clean:
-	$(RM) $(OBJ) $(PROG)
+	$(RM) $(PROTO) $(OBJ) $(PROG)
