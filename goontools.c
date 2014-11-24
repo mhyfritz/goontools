@@ -2,14 +2,14 @@
 
 void usage(char* prog)
 {
-    printf("\n");
-    printf("Usage: %s <subcommand> <subcommand arguments>\n", prog);
-    printf("\n");
-    printf("subcommands:\n");
-    printf("    index    index file\n");
-    printf("    sort     sort file\n");
-    printf("    view     view/slice file\n");
-    printf("\n");
+    fprintf(stderr, "\n");
+    fprintf(stderr, "Usage: %s <subcommand> <subcommand arguments>\n", prog);
+    fprintf(stderr, "\n");
+    fprintf(stderr, "subcommands:\n");
+    fprintf(stderr, "    index    index file\n");
+    fprintf(stderr, "    sort     sort file\n");
+    fprintf(stderr, "    view     view/slice file\n");
+    fprintf(stderr, "\n");
 }
 
 int dispatch(int argc, char *argv[])
