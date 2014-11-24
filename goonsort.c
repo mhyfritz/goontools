@@ -145,15 +145,20 @@ int goonsort(int argc, char *argv[])
         r = construct_gn_sort_record(line, seq_needle, start_needle);
         assert(r != NULL);
         ARRAY_PUSH(&gn_records, Gn_sort_record_t, *r);
+        free(r);
     }
+
+    fclose(f);
 
     ks_mergesort(sort, gn_records.nextfree, gn_records.elems, NULL);
 
     for (r = gn_records.elems; r - gn_records.elems < gn_records.nextfree; r += 1) {
         printf("%s", r->json);
+        free(r->chrom);
+        free(r->json);
     }
 
-    fclose(f);
+    free(gn_records.elems);
 
     return 0;
 } 
