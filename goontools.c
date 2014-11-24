@@ -38,7 +38,7 @@ int dispatch(int argc, char *argv[])
         return -1;
     }
 
-    return dispatch[s-subcommands](argc-2, argv+2);
+    return dispatch[s-subcommands](argc-1, argv+1);
 }
 
 int main(int argc, char *argv[])
