@@ -19,7 +19,7 @@ $(PROG): $(OBJ)
 	$(LD) $(LDFLAGS) -o $(PROG) $(OBJ)
 
 $(PROTO): %.p: %.c
-	perl -ne 'm,^(?!static|[#{}\s/*]), && chomp && print "$$_;\n"' $< > $@
+	perl get_c_proto.pl $< > $@
 
 clean:
 	$(RM) $(PROTO) $(OBJ) $(PROG)
