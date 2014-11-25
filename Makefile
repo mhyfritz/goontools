@@ -16,7 +16,7 @@ PROTO = $(GOONSUBSRC:.c=.p)
 all: $(PROTO) $(PROG)
 
 $(PROG): $(OBJ)
-	$(LD) $(LDFLAGS) -o $(PROG) $(OBJ)
+	$(LD) -o $(PROG) $(OBJ) $(LDFLAGS)
 
 $(PROTO): %.p: %.c
 	perl get_c_proto.pl $< > $@
