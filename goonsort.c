@@ -117,7 +117,7 @@ int goonsort(int argc, char *argv[])
     }
 
     if (seq_key == NULL || start_key == NULL) {
-        USAGE;
+        fprintf(stderr, "error: missing mandatory argument\n");
         return -1;
     }
 
@@ -160,6 +160,7 @@ int goonsort(int argc, char *argv[])
 
     free(seq_needle);
     free(start_needle);
+
     free(gn_records.elems);
 
     return 0;
