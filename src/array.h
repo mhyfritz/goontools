@@ -4,8 +4,8 @@
 #define ARRAY_DECLARE(TYPE) \
     typedef struct { \
         TYPE *elems; \
-        unsigned long allocated, \
-                      nextfree; \
+        size_t allocated, \
+               nextfree; \
     } Array##TYPE
 
 #define ARRAY_INIT(A, TYPE, SIZE) \

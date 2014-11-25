@@ -161,7 +161,7 @@ int goonsort(int argc, char *argv[])
     free(seq_needle);
     free(start_needle);
 
-    free(gn_records.elems);
+    ARRAY_FREE(&gn_records);
 
     return 0;
 } 
