@@ -6,7 +6,7 @@
 static void usage(char *prog)
 {
     fprintf(stderr, "\n");
-    fprintf(stderr, "Usage: %s <arguments> <goonfile.bgz>\n", prog);
+    fprintf(stderr, "Usage: %s <arguments> <goon.bgz>\n", prog);
     fprintf(stderr, "\n");
     fprintf(stderr, "arguments:\n");
     fprintf(stderr, "    -s/--seqkey     sequence key (mandatory)\n");
