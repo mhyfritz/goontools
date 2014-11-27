@@ -8,15 +8,8 @@
 #include <stdint.h>
 
 #include "bgzf.h"
+#include "tabix.h"
 
 #include "goonindex.p"
-
-typedef struct {
-    char *seq_key,
-         *start_key,
-         *end_key;
-    uint8_t zerobased,
-            rightopen;
-} Gn_index_conf;
 
 #endif

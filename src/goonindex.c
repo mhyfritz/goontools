@@ -18,28 +18,49 @@ static void usage(char *prog)
     fprintf(stderr, "\n");
 }
 
+static int build_gn_index(char *fn, ti_conf_t *conf)
+{
+    char *fnidx;
+
+    fnidx = malloc(strlen(fn) + strlen(IDX_EXT) + 1);
+    strcat(strcpy(fnidx, fn), IDX_EXT);
+
+    return ti_index_build(fn, conf);
+}
+
+static int store_key(char *src, char *dest)
+{
+    if (strlen(src) > MAX_KEY_LEN) {
+        fprintf(stderr, "error: key length limited to %d\n", MAX_KEY_LEN);
+        return -1;
+    }
+    if (strcpy(dest, src) == NULL) {
+        return -1;
+    }
+    return 0;
+}
+
 int goonindex(int argc, char *argv[])
 {
     struct option opts[] = {
         {"seqkey", required_argument, NULL, 's'},
         {"startkey", required_argument, NULL, 'b'},
         {"endkey", required_argument, NULL, 'e'},
-        {"zerobased", required_argument, NULL, '0'},
-        {"rightopen", required_argument, NULL, 'r'},
+        {"zerobased", no_argument, NULL, '0'},
+        {"rightopen", no_argument, NULL, 'r'},
         {"help", no_argument, NULL, 'h'},
         {NULL, 0, NULL, 0}
     };
     struct stat f_stat;
     int c;
-    Gn_index_conf conf;
+    ti_conf_t conf;
 
     if (argc == 1) {
         USAGE;
         return -1;
     }
 
-    conf.seq_key = conf.start_key = conf.end_key = NULL;
-    conf.rightopen = 0;
+    INIT_CONF(&conf);
 
     while ((c = getopt_long(argc,
                             argv,
@@ -49,11 +70,20 @@ int goonindex(int argc, char *argv[])
         switch (c) {
             case 'h': USAGE;
                       return -1;
-            case 's': conf.seq_key = optarg;
+            case 's': if (store_key(optarg, conf.sk) != 0) {
+                          fprintf(stderr, "could not store key\n");
+                          return -1;
+                      }
                       break;
-            case 'b': conf.start_key = optarg;
+            case 'b': if (store_key(optarg, conf.bk) != 0) {
+                          fprintf(stderr, "could not store key\n");
+                          return -1;
+                      }
                       break;
-            case 'e': conf.end_key = optarg;
+            case 'e': if (store_key(optarg, conf.ek) != 0) {
+                          fprintf(stderr, "could not store key\n");
+                          return -1;
+                      }
                       break;
             case '0': conf.zerobased = 1;
                       break;
@@ -63,7 +93,7 @@ int goonindex(int argc, char *argv[])
         }
     }
 
-    if (conf.seq_key == NULL || conf.start_key == NULL) {
+    if (conf.sk == NULL || conf.sk == NULL) {
         fprintf(stderr, "error: missing mandatory argument\n");
         return -1;
     }
@@ -83,19 +113,7 @@ int goonindex(int argc, char *argv[])
         return -1;
     }
 
-    if (optind == argc) {
-        fprintf(stderr, "error: missing file name");
-    }
-
-    if (stat(argv[optind], &f_stat) != 0) {
-        fprintf(stderr, "error: input file does not exist\n");
-        return -1;
-    }
-
-    if (bgzf_is_bgzf(argv[optind]) != 1) {
-        fprintf(stderr, "error: input file is not in bgzip format\n");
-        return -1;
-    } 
+    return build_gn_index(argv[optind], &conf);
 
     return 0;
 }
