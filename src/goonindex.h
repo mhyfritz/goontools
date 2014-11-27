@@ -15,7 +15,8 @@ typedef struct {
     char *seq_key,
          *start_key,
          *end_key;
-    uint8_t rightopen;
+    uint8_t zerobased,
+            rightopen;
 } Gn_index_conf;
 
 #endif

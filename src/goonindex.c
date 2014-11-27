@@ -12,6 +12,7 @@ static void usage(char *prog)
     fprintf(stderr, "    -s/--seqkey     sequence key (mandatory)\n");
     fprintf(stderr, "    -b/--startkey   start position key (mandatory)\n");
     fprintf(stderr, "    -e/--endkey     end position key\n");
+    fprintf(stderr, "    -0/--zerobased  zero-based positions\n");
     fprintf(stderr, "    -r/--rightopen  right-open positions\n");
     fprintf(stderr, "    -h/--help       display help\n");
     fprintf(stderr, "\n");
@@ -23,6 +24,7 @@ int goonindex(int argc, char *argv[])
         {"seqkey", required_argument, NULL, 's'},
         {"startkey", required_argument, NULL, 'b'},
         {"endkey", required_argument, NULL, 'e'},
+        {"zerobased", required_argument, NULL, '0'},
         {"rightopen", required_argument, NULL, 'r'},
         {"help", no_argument, NULL, 'h'},
         {NULL, 0, NULL, 0}
@@ -41,7 +43,7 @@ int goonindex(int argc, char *argv[])
 
     while ((c = getopt_long(argc,
                             argv,
-                            "s:b:e:rh",
+                            "s:b:e:0rh",
                             opts,
                             NULL)) != -1) {
         switch (c) {
@@ -52,6 +54,8 @@ int goonindex(int argc, char *argv[])
             case 'b': conf.start_key = optarg;
                       break;
             case 'e': conf.end_key = optarg;
+                      break;
+            case '0': conf.zerobased = 1;
                       break;
             case 'r': conf.rightopen = 1;
                       break;
@@ -78,6 +82,20 @@ int goonindex(int argc, char *argv[])
         fprintf(stderr, "error: input file is not in bgzip format\n");
         return -1;
     }
+
+    if (optind == argc) {
+        fprintf(stderr, "error: missing file name");
+    }
+
+    if (stat(argv[optind], &f_stat) != 0) {
+        fprintf(stderr, "error: input file does not exist\n");
+        return -1;
+    }
+
+    if (bgzf_is_bgzf(argv[optind]) != 1) {
+        fprintf(stderr, "error: input file is not in bgzip format\n");
+        return -1;
+    } 
 
     return 0;
 }
