@@ -39,10 +39,15 @@ int goonview(int argc, char *argv[])
     struct stat f_stat;
     struct option long_options[] =
     {
+        {"help", no_argument, NULL, 'h'},
+        {NULL, 0, NULL, 0}
     };
     int c;
     char *fn_goon, *fn_idx;
     tabix_t *t;
+    Gn_view_conf conf;
+
+    conf.zerobased = conf.rightopen = 0;
 
     if (argc < 3) {
         USAGE;
@@ -51,11 +56,13 @@ int goonview(int argc, char *argv[])
 
     while ((c = getopt_long(argc,
                             argv,
-                            "",
+                            "h",
                             long_options,
                             NULL)) != -1) {
         switch (c) {
-            default: break;
+            case 'h': USAGE;
+                      return -1;
+            default: return -1;
         }
     }
 

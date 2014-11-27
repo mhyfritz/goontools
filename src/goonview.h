@@ -11,4 +11,9 @@
 
 #include "goonview.p"
 
+typedef struct {
+    int8_t zerobased,
+           rightopen;
+} Gn_view_conf;
+
 #endif

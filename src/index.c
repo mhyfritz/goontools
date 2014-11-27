@@ -21,13 +21,14 @@ typedef struct {
     pair64_t *list;
 } ti_binlist_t;
 
+KHASH_MAP_INIT_INT(i, ti_binlist_t)
+KHASH_MAP_INIT_STR(s, int)
+
+
 typedef struct {
     int32_t n, m;
     uint64_t *offset;
 } ti_lidx_t;
-
-KHASH_MAP_INIT_INT(i, ti_binlist_t)
-KHASH_MAP_INIT_STR(s, int)
 
 struct __ti_index_t {
     ti_conf_t conf;
@@ -117,23 +118,6 @@ int ti_get_intv(const ti_conf_t *conf, int len, char *line, ti_interval_t *intv)
         if (*s == '"') {
             if (strncmp(s, bk_needle, strlen(bk_needle)) == 0) {
                 intv->beg = intv->end = atoi(s+strlen(bk_needle));
-                if (!conf->zerobased) {
-                    if (intv->beg <= 0 || intv->end <= 0) {
-                        fprintf(stderr, "[ti_get_intv] encountered illegal position:\n");
-                        fprintf(stderr, "%s", line);
-                        return -1;
-                    }
-                    intv->beg -= 1;
-                    intv->end -= 1;
-                }
-                if (conf->rightopen) {
-                    if (intv->end <= 0) {
-                        fprintf(stderr, "[ti_get_intv] encountered illegal position:\n");
-                        fprintf(stderr, "%s", line);
-                        return -1;
-                    }
-                    intv->end -= 1;
-                }
                 s += strlen(bk_needle) - 1;
                 num_pos_left -= 1;
             } else if (conf->ek != NULL && (strncmp(s, ek_needle, strlen(ek_needle)) == 0)) {
@@ -165,9 +149,24 @@ int ti_get_intv(const ti_conf_t *conf, int len, char *line, ti_interval_t *intv)
         }
     }
 
-    if (intv->ss == NULL || intv->se == NULL 
-            || intv->beg < 0 || intv->end < 0) {
+    if (intv->ss == NULL || intv->se == NULL) {
         return -1;
+    }
+
+    if (!conf->zerobased) {
+        if (intv->beg <= 0 || intv->end <= 0) {
+            fprintf(stderr, "[ti_get_intv] encountered illegal position:\n");
+            return -1;
+        }
+        intv->beg -= 1;
+    }
+
+    if (!conf->rightopen) {
+        if (intv->end < 0) {
+            fprintf(stderr, "[ti_get_intv] encountered illegal position:\n");
+            return -1;
+        }
+        intv->end += 1;
     }
 
     return 0;

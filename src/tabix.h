@@ -30,12 +30,24 @@
 
 #include <stdint.h>
 #include "kstring.h"
+#include "khash.h"
 #include "bgzf.h"
 
 #define IDX_EXT ".gni"
 #define IDX_MAGIC "GNI\1"
 
 typedef int (*ti_fetch_f)(int l, const char *s, void *data);
+
+// FIXME:
+#define MAX_KEY_LEN 1023
+
+typedef struct {
+	char sk[MAX_KEY_LEN+1], // FIXME
+         bk[MAX_KEY_LEN+1],
+         ek[MAX_KEY_LEN+1];
+	int32_t meta_char, line_skip;
+    int8_t zerobased, rightopen;
+} ti_conf_t;
 
 struct __ti_index_t;
 typedef struct __ti_index_t ti_index_t;
@@ -48,17 +60,6 @@ typedef struct {
 	ti_index_t *idx;
 	char *fn, *fnidx;
 } tabix_t;
-
-// FIXME:
-#define MAX_KEY_LEN 1023
-
-typedef struct {
-	char sk[MAX_KEY_LEN+1], // FIXME
-         bk[MAX_KEY_LEN+1],
-         ek[MAX_KEY_LEN+1];
-	int32_t meta_char, line_skip;
-    int8_t zerobased, rightopen;
-} ti_conf_t;
 
 #define INIT_CONF(C) \
     (C)->sk[0] = '\0'; \
