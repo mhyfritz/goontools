@@ -8,6 +8,6 @@
 #include "bgzf.h"
 #include "tabix.h"
 
-#include "goonidxstats.p"
+#include "goonidxstat.p"
 
 #endif

@@ -9,7 +9,7 @@ void usage(char* prog)
     fprintf(stderr, "    index      index file\n");
     fprintf(stderr, "    sort       sort file\n");
     fprintf(stderr, "    view       view/slice file\n");
-    fprintf(stderr, "    idxstats   print index information\n");
+    fprintf(stderr, "    idxstat    print index information\n");
     fprintf(stderr, "\n");
 }
 
@@ -26,7 +26,7 @@ int dispatch(int argc, char *argv[])
         &goonindex,
         &goonview,
         &goonsort,
-        &goonidxstats
+        &goonidxstat
     };
     char **s;
 

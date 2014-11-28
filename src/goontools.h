@@ -8,7 +8,7 @@
 #include "goonindex.h"
 #include "goonsort.h"
 #include "goonview.h"
-#include "goonidxstats.h"
+#include "goonidxstat.h"
 
 typedef int (*Subcommand)(int, char**);
 

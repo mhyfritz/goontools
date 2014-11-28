@@ -1,6 +1,6 @@
-#include "goonidxstats.h"
+#include "goonidxstat.h"
 
-#define PROG_ALIAS "goonidxstats"
+#define PROG_ALIAS "goonidxstat"
 #define USAGE usage(PROG_ALIAS)
 
 static void usage(char *prog)
@@ -10,7 +10,7 @@ static void usage(char *prog)
     fprintf(stderr, "\n");
 }
 
-int goonidxstats(int argc, char *argv[])
+int goonidxstat(int argc, char *argv[])
 {
     struct stat f_stat;
     char *fn_goon, *fn_idx;
