@@ -9,7 +9,7 @@ void usage(char* prog)
     fprintf(stderr, "    index      index file\n");
     fprintf(stderr, "    sort       sort file\n");
     fprintf(stderr, "    view       view/slice file\n");
-    fprintf(stderr, "    idxstats   index stats\n");
+    fprintf(stderr, "    idxstats   print index information\n");
     fprintf(stderr, "\n");
 }
 
