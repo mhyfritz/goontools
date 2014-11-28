@@ -14,8 +14,11 @@ int goonidxstats(int argc, char *argv[])
 {
     struct stat f_stat;
     char *fn_goon, *fn_idx;
-    tabix_t *t;
+    ti_index_t *idx;
+
     const ti_conf_t *ti_conf;
+    const char **names;
+    int i, n;
 
     if (argc != 2) {
         USAGE;
@@ -46,25 +49,27 @@ int goonidxstats(int argc, char *argv[])
 
     free(fn_idx);
 
-    if ((t = ti_open(fn_goon, 0)) == 0) {
-        fprintf(stderr, "error: fail to open the data file.\n");
-        return -1;
-    }
-
-    if (ti_lazy_index_load(t) < 0) {
+    if ((idx = ti_index_load(fn_goon)) == 0) {
         fprintf(stderr,"error: failed to load the index file.\n");
         return -1;
     }
 
-    ti_conf = ti_get_conf(t->idx);
+    ti_conf = ti_get_conf(idx);
 
-    printf("SEQUENCE_KEY  %s\n", ti_conf->sk);
-    printf("START_KEY     %s\n", ti_conf->bk);
-    printf("END_KEY       %s\n", ti_conf->ek ? ti_conf->ek : "");
-    printf("ZERO_BASED    %s\n", ti_conf->zerobased ? "true" : "false");
-    printf("RIGHT_OPEN    %s\n", ti_conf->zerobased ? "true" : "false");
+    names = ti_seqname(idx, &n);
+    for (i = 0; i < n; ++i) {
+        printf("SEQUENCE_NAME  %s\n", names[i]);
+    }
+    printf("\n");
 
-    ti_close(t);
+    printf("SEQUENCE_KEY   %s\n", ti_conf->sk);
+    printf("START_KEY      %s\n", ti_conf->bk);
+    printf("END_KEY        %s\n", ti_conf->ek ? ti_conf->ek : "");
+    printf("ZERO_BASED     %s\n", ti_conf->zerobased ? "true" : "false");
+    printf("RIGHT_OPEN     %s\n", ti_conf->zerobased ? "true" : "false");
+
+    free(names);
+    ti_index_destroy(idx);
 
     return 0;
 }

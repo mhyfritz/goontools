@@ -314,6 +314,18 @@ void ti_index_save(const ti_index_t *idx, BGZF *fp)
     }
 }
 
+const char **ti_seqname(const ti_index_t *idx, int *n)
+{
+    const char **names;
+    khint_t k;
+    *n = idx->n;
+    names = calloc(idx->n, sizeof(void*));
+    for (k = kh_begin(idx->tname); k < kh_end(idx->tname); ++k)
+        if (kh_exist(idx->tname, k))
+            names[kh_val(idx->tname, k)] = kh_key(idx->tname, k);
+    return names;
+}
+
 static ti_index_t *ti_index_load_core(BGZF *fp)
 {
     char magic[4];
