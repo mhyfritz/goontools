@@ -19,7 +19,7 @@ $(PROG): $(OBJ)
 	$(LD) -o $(PROG) $(OBJ) $(LDFLAGS)
 
 $(PROTO): %.p: %.c
-	perl ../util/get_c_proto.pl $< > $@
+	perl get_c_proto.pl $< > $@
 
 clean:
 	$(RM) $(PROTO) $(OBJ) $(PROG)
