@@ -19,7 +19,7 @@ int dispatch(int argc, char *argv[])
         "index",
         "view",
         "sort",
-        "idxstats",
+        "idxstat",
         NULL // sentinel
     };
     Subcommand dispatch[] = {
