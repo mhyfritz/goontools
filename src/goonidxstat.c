@@ -64,9 +64,9 @@ int goonidxstat(int argc, char *argv[])
 
     printf("SEQUENCE_KEY   %s\n", ti_conf->sk);
     printf("START_KEY      %s\n", ti_conf->bk);
-    printf("END_KEY        %s\n", ti_conf->ek ? ti_conf->ek : "");
+    printf("END_KEY        %s\n", ti_conf->ek);
     printf("ZERO_BASED     %s\n", ti_conf->zerobased ? "true" : "false");
-    printf("RIGHT_OPEN     %s\n", ti_conf->zerobased ? "true" : "false");
+    printf("RIGHT_OPEN     %s\n", ti_conf->rightopen ? "true" : "false");
 
     free(names);
     ti_index_destroy(idx);

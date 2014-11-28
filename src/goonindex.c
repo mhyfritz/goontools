@@ -93,8 +93,14 @@ int goonindex(int argc, char *argv[])
         }
     }
 
-    if (conf.sk == NULL || conf.sk == NULL) {
+    if (conf.sk[0] == '\0' || conf.bk[0] == '\0') {
         fprintf(stderr, "error: missing mandatory argument\n");
+        return -1;
+    }
+
+    if (conf.ek[0] == '\0' && conf.rightopen) {
+        fprintf(stderr, "error: options `rightopen` not allowed with single "
+                        "position\n");
         return -1;
     }
 

@@ -159,14 +159,19 @@ int ti_get_intv(const ti_conf_t *conf, int len, char *line, ti_interval_t *intv)
             return -1;
         }
         intv->beg -= 1;
+        if (conf->rightopen) {
+            intv->end -= 1;
+        }
     }
 
-    if (!conf->rightopen) {
-        if (intv->end < 0) {
+    if (conf->zerobased) {
+        if (intv->beg < 0 || intv->end < 0) {
             fprintf(stderr, "[ti_get_intv] encountered illegal position:\n");
             return -1;
         }
-        intv->end += 1;
+        if (!conf->rightopen) {
+            intv->end += 1;
+        }
     }
 
     return 0;
