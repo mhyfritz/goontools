@@ -6,9 +6,10 @@ void usage(char* prog)
     fprintf(stderr, "Usage: %s <subcommand> <subcommand arguments>\n", prog);
     fprintf(stderr, "\n");
     fprintf(stderr, "subcommands:\n");
-    fprintf(stderr, "    index    index file\n");
-    fprintf(stderr, "    sort     sort file\n");
-    fprintf(stderr, "    view     view/slice file\n");
+    fprintf(stderr, "    index      index file\n");
+    fprintf(stderr, "    sort       sort file\n");
+    fprintf(stderr, "    view       view/slice file\n");
+    fprintf(stderr, "    idxstats   index stats\n");
     fprintf(stderr, "\n");
 }
 
@@ -18,12 +19,14 @@ int dispatch(int argc, char *argv[])
         "index",
         "view",
         "sort",
+        "idxstats",
         NULL // sentinel
     };
     Subcommand dispatch[] = {
         &goonindex,
         &goonview,
-        &goonsort
+        &goonsort,
+        &goonidxstats
     };
     char **s;
 
