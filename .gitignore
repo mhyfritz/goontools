@@ -1,0 +1,4 @@
+goontools
+*.o
+*.p
+*.d
