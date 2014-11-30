@@ -1,4 +1,5 @@
 goontools
+_tmp/
 *.o
 *.p
 *.d
