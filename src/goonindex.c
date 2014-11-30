@@ -120,6 +120,4 @@ int goonindex(int argc, char *argv[])
     }
 
     return build_gn_index(argv[optind], &conf);
-
-    return 0;
 }
