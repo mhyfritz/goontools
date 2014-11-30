@@ -103,11 +103,11 @@ int ti_get_intv(const ti_conf_t *conf, int len, char *line, ti_interval_t *intv)
     char sk_needle[MAX_KEY_LEN+4],
          bk_needle[MAX_KEY_LEN+4],
          ek_needle[MAX_KEY_LEN+4];
-    uint8_t num_pos_left = conf->ek == NULL ? 1 : 2;
+    uint8_t num_pos_left = conf->ek[0] == '\0' ? 1 : 2;
 
     snprintf(sk_needle, sizeof sk_needle, "\"%s\":", conf->sk);
     snprintf(bk_needle, sizeof bk_needle, "\"%s\":", conf->bk);
-    if (conf->ek != NULL) {
+    if (conf->ek[0] != '\0') {
         snprintf(ek_needle, sizeof ek_needle, "\"%s\":", conf->ek);
     }
 
@@ -117,10 +117,13 @@ int ti_get_intv(const ti_conf_t *conf, int len, char *line, ti_interval_t *intv)
     for (s = line; s - line < len; s++) {
         if (*s == '"') {
             if (strncmp(s, bk_needle, strlen(bk_needle)) == 0) {
-                intv->beg = intv->end = atoi(s+strlen(bk_needle));
+                intv->beg = atoi(s+strlen(bk_needle));
+                if (intv->end == -1) {
+                    intv->end = intv->beg;
+                }
                 s += strlen(bk_needle) - 1;
                 num_pos_left -= 1;
-            } else if (conf->ek != NULL && (strncmp(s, ek_needle, strlen(ek_needle)) == 0)) {
+            } else if (conf->ek[0] != '\0' && (strncmp(s, ek_needle, strlen(ek_needle)) == 0)) {
                 intv->end = atoi(s+strlen(ek_needle));
                 s += strlen(ek_needle) - 1;
                 num_pos_left -= 1;
@@ -182,7 +185,7 @@ static int get_intv(ti_index_t *idx, kstring_t *str, ti_intv_t *intv)
     ti_interval_t x;
     intv->tid = intv->beg = intv->end = intv->bin = -1;
     if (ti_get_intv(&idx->conf, str->l, str->s, &x) == 0) {
-        //fprintf(stderr, "beg: %d end: %d\n", x.beg, x.end);
+        //fprintf(stderr, "get_intv beg: %d end: %d\n", x.beg, x.end);
         int c = *x.se;
         *x.se = '\0'; intv->tid = get_tid(idx, x.ss); *x.se = c;
         intv->beg = x.beg; intv->end = x.end;
