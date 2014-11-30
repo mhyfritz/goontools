@@ -606,6 +606,9 @@ int ti_get_tid(const ti_index_t *idx, const char *name)
     return kh_value(h, iter);
 }
 
+/* unlike tabix, we return the "raw" coordinates and leave it up
+ * to the caller to modify them
+ */
 int ti_parse_region(const ti_index_t *idx, const char *str, int *tid, int *begin, int *end)
 {
     char *s, *p;
@@ -632,7 +635,7 @@ int ti_parse_region(const ti_index_t *idx, const char *str, int *tid, int *begin
         p = s + i + 1;
         *end = atoi(p);
     } else *end = 1<<29;
-    if (*begin > 0) --*begin;
+    //if (*begin > 0) --*begin;
     free(s);
     if (*begin > *end) return -1;
     return 0;

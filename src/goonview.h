@@ -13,7 +13,9 @@
 
 typedef struct {
     int8_t zerobased,
-           rightopen;
+           onebased,
+           rightopen,
+           closed;
 } Gn_view_conf;
 
 #endif
