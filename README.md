@@ -41,12 +41,12 @@ In particular, following commands are currently implemented:
 * `view`
 * `idxstat`
 
-`goontools` takes inspiration from <cite>[`tabix`][1]</cite> and 
-<cite>[`samtools`][2]</cite>.
+`goontools` takes inspiration from `tabix`][1] and `samtools`[2].
 A lot of inspiration. In fact, most heavy lifting is
 done using parts of their codebase.
 
 NOTE: this is work in progess. Here be <del>dragons</del> bugs. Potentially.
 
 [1] http://samtools.sourceforge.net/
+
 [2] http://bioinformatics.oxfordjournals.org/content/27/5/718.full
