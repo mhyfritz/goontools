@@ -41,7 +41,7 @@ In particular, following commands are currently implemented:
 * `view`
 * `idxstat`
 
-`goontools` takes inspiration from `tabix`][1] and `samtools`[2].
+`goontools` takes inspiration from `tabix`[1] and `samtools`[2].
 A lot of inspiration. In fact, most heavy lifting is
 done using parts of their codebase.
 
