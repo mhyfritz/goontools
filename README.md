@@ -50,7 +50,7 @@ $ bgzip test.srt.ldj
 # zero-based positions, i.e. pass `-0`
 $ goontools index -s CHROM -b POS -0 test.srt.ldj.gz
 # check what we've indexed
-$ ../../src/goontools idxstat test.srt.ldj.gz
+$ goontools idxstat test.srt.ldj.gz
 SEQUENCE_NAME  chr1
 SEQUENCE_NAME  chr12
 SEQUENCE_NAME  chr3
