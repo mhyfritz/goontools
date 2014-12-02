@@ -49,6 +49,17 @@ $ goontools sort -s CHROM -b POS test.ldj > test.srt.ldj
 $ bgzip test.srt.ldj
 # zero-based positions, i.e. pass `-0`
 $ goontools index -s CHROM -b POS -0 test.srt.ldj.gz
+# check what we've indexed
+$ ../../src/goontools idxstat test.srt.ldj.gz
+SEQUENCE_NAME  chr1
+SEQUENCE_NAME  chr12
+SEQUENCE_NAME  chr3
+SEQUENCE_NAME  chrX
+SEQUENCE_KEY   CHROM
+START_KEY      POS
+END_KEY
+ZERO_BASED     true
+RIGHT_OPEN     false
 # by default `view` assumes position encoding from original file, i.e. 0-based, closed here
 $ goontools view test.srt.ldj.gz chr1
 {"KEY3": "qux17", "KEY2": "baz17", "KEY1": "bar17", "KEY0": "foo17", "POS": 0, "CHROM": "chr1"}
