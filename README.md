@@ -39,7 +39,7 @@ In particular, following commands are currently implemented:
 * `view`
 * `idxstat`
 
-Let's take a look at `test.ldj` from the `example` directory:
+Let's take a look at *test.ldj* from the *example* directory:
 
 ~~~
 $ head -1 test.ldj
