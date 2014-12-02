@@ -60,7 +60,6 @@ int goonidxstat(int argc, char *argv[])
     for (i = 0; i < n; ++i) {
         printf("SEQUENCE_NAME  %s\n", names[i]);
     }
-    printf("\n");
 
     printf("SEQUENCE_KEY   %s\n", ti_conf->sk);
     printf("START_KEY      %s\n", ti_conf->bk);
