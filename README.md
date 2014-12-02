@@ -34,16 +34,37 @@ Back to `goontools`.
 `goontools` provides a set of commands to manipulate GOON files.
 In particular, following commands are currently implemented:
 
-*TODO: extend this section...*
-
 * `sort`
 * `index`
 * `view`
 * `idxstat`
 
+Let's take a look at `test.ldj` from the `example` directory:
+
+~~~
+$ head -1 test.ldj
+{"KEY3": "qux0", "KEY2": "baz0", "KEY1": "bar0", "KEY0": "foo0", "POS": 5, "CHROM": "chr3"}
+# only one position, so no END key needed:
+$ goontools sort -s CHROM -b POS test.ldj > test.srt.ldj
+$ bgzip test.srt.ldj
+# zero-based positions, i.e. pass `-0`
+$ goontools index -s CHROM -b POS -0 test.srt.ldj.gz
+# by default `view` assumes position encoding from original file, i.e. 0-based, closed here
+$ goontools view test.srt.ldj.gz chr1
+{"KEY3": "qux17", "KEY2": "baz17", "KEY1": "bar17", "KEY0": "foo17", "POS": 0, "CHROM": "chr1"}
+{"KEY3": "qux2", "KEY2": "baz2", "KEY1": "bar2", "KEY0": "foo2", "POS": 9, "CHROM": "chr1"}
+{"KEY3": "qux7", "KEY2": "baz7", "KEY1": "bar7", "KEY0": "foo7", "POS": 9, "CHROM": "chr1"}
+$ goontools view test.srt.ldj.gz chr1:0-8
+{"KEY3": "qux17", "KEY2": "baz17", "KEY1": "bar17", "KEY0": "foo17", "POS": 0, "CHROM": "chr1"}
+$ goontools view test.srt.ldj.gz chr1:9
+{"KEY3": "qux2", "KEY2": "baz2", "KEY1": "bar2", "KEY0": "foo2", "POS": 9, "CHROM": "chr1"}
+{"KEY3": "qux7", "KEY2": "baz7", "KEY1": "bar7", "KEY0": "foo7", "POS": 9, "CHROM": "chr1"}
+~~~
+
 `goontools` takes inspiration from `tabix`[1] and `samtools`[2].
 A lot of inspiration. In fact, most heavy lifting is
 done using parts of their codebase.
+Kudos [Heng](http://en.wikipedia.org/wiki/Heng_Li)!
 
 NOTE: this is work in progess. Here be <del>dragons</del> bugs. Potentially.
 
