@@ -21,9 +21,9 @@ sequence name key and *POS* the (only) position key:
 {"CHR": "chrX", "POS": 500017, "ALLELES": ["C", "T"]}
 ~~~
 
-And here's another one, where *chrom* is the sequence name key and
-*chromStart* and *chromEnd* are position keys, whose values define
-an interval on the sequence.
+And in a different file you could have records with following
+structure: sequence name key *chrom*  and position keys
+*chromStart* and *chromEnd*, whose values define an interval on the sequence.
 
 ~~~
 {"chrom": "chr20", "chromStart": 0, "chromEnd": 500, "strand": "+"}
