@@ -1,5 +1,6 @@
 goontools
 _tmp/
+venv/
 *.o
 *.p
 *.d
