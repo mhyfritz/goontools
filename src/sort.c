@@ -78,6 +78,16 @@ static void write_buffer(const char *fn,
     bgzf_close(fp);
 } 
 
+static char* construct_tmp_fname(char *prefix, int i)
+{
+    char *name;
+
+    name = (char*)calloc(strlen(prefix) + 14, 1);
+    sprintf(name, "%s.%04d.goon.gz", prefix, i);
+
+    return name;
+}
+
 typedef struct {
     size_t buf_len;
     const char *prefix;
@@ -90,8 +100,7 @@ static void *worker(void *data)
     worker_t *w = (worker_t*)data;
     char *name;
     ks_mergesort(sort, w->buf_len, w->buf, 0);
-    name = (char*)calloc(strlen(w->prefix) + 14, 1);
-    sprintf(name, "%s.%04d.goon.gz", w->prefix, w->index);
+    name = construct_tmp_fname(w->prefix, w->index);
     write_buffer(name, "w1", w->buf_len, w->buf);
     free(name);
     return 0;
@@ -117,7 +126,7 @@ static int sort_blocks(int n_files,
     
     // use a single thread if we only sort a small batch of records
     if (k < n_threads * 64) {
-        //n_threads = 1;
+        n_threads = 1;
     }
 
     pthread_attr_init(&attr);
@@ -217,13 +226,24 @@ int goon_sort_core(FILE *f, Gn_sort_conf *conf)
             printf("%s", buf[i]->json);
         }
     } else {
+        char **fns;
         n_files = sort_blocks(n_files,
                               k,
                               buf,
                               conf->prefix,
                               conf->n_threads);
         fprintf(stderr, "[goon_sort_core] merging %d files\n", n_files);
+        for (i = 0; i < n_files; i += 1) {
+            fns[i] = construct_tmp_fname(conf->prefix, i);
+        }
 
+        // TODO merging
+
+        for (i = 0; i < n_files; i += 1) {
+            //unlink(fns[i]);
+            free(fns[i]);
+        }
+        free(fns);
     }
 
     free(seq_needle);
