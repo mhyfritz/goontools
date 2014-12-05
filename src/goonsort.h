@@ -17,6 +17,7 @@
 #include "goonsort.p"
 
 #define MAX_MEM_MB_DEFAULT (size_t)756
+#define TEMP_FILE_PREFIX_DEFAULT "gnsrt"
 
 typedef struct {
     int32_t pos;
@@ -27,7 +28,8 @@ typedef Gn_sort_record_t *Gn_sort_record_p;
 
 typedef struct {
     char *seq_key,
-         *start_key;
+         *start_key,
+         *prefix;
     size_t max_mem;
     int n_threads;
 } Gn_sort_conf;

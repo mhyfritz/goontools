@@ -17,6 +17,8 @@ static void usage(char *prog)
     fprintf(stderr, "    -m/--maxmem     maximal amount of memory per thread "
                                          "(suffixes K/M/G recognized; "
                                          "default=%luM)\n", MAX_MEM_MB_DEFAULT);
+    fprintf(stderr, "    -p/--prefix     temp file prefix (default=%s)\n",
+                                         TEMP_FILE_PREFIX_DEFAULT);
     fprintf(stderr, "    -h/--help       display help\n");
     fprintf(stderr, "\n");
 }
@@ -24,7 +26,7 @@ static void usage(char *prog)
 static void gn_conf_init(Gn_sort_conf *conf)
 {
     conf->max_mem = MAX_MEM_MB_DEFAULT << 20;
-    conf->seq_key = conf->start_key = NULL;
+    conf->seq_key = conf->start_key = conf->prefix = NULL;
     conf->n_threads = 1;
 }
 
@@ -35,6 +37,7 @@ int goonsort(int argc, char *argv[])
         {"startkey", required_argument, NULL, 'b'},
         {"threads", required_argument, NULL, 't'},
         {"mem", required_argument, NULL, 'm'},
+        {"prefix", required_argument, NULL, 'p'},
         {"help", no_argument, NULL, 'h'},
         {NULL, 0, NULL, 0}
     };
@@ -52,7 +55,7 @@ int goonsort(int argc, char *argv[])
 
     while ((c = getopt_long(argc,
                             argv,
-                            "s:b:t:m:h",
+                            "s:b:t:m:p:h",
                             opts,
                             NULL)) != -1) {
         switch (c) {
@@ -76,6 +79,8 @@ int goonsort(int argc, char *argv[])
                           }
                           break;
                       }
+            case 'p': conf.prefix = optarg;
+                      break;
             default: return -1;
         }
     }
@@ -88,6 +93,10 @@ int goonsort(int argc, char *argv[])
     if (conf.n_threads < 1) {
         fprintf(stderr, "error: `threads` has to be greater than zero\n");
         return -1;
+    }
+
+    if (conf.prefix == NULL) {
+        conf.prefix = TEMP_FILE_PREFIX_DEFAULT;
     }
 
     if (optind == argc) {

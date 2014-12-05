@@ -91,18 +91,18 @@ static void *worker(void *data)
     char *name;
     ks_mergesort(sort, w->buf_len, w->buf, 0);
     name = (char*)calloc(strlen(w->prefix) + 14, 1);
-    sprintf(name, "%s.%.4d.goon.gz", w->prefix, w->index);
+    sprintf(name, "%s.%04d.goon.gz", w->prefix, w->index);
     write_buffer(name, "w1", w->buf_len, w->buf);
     free(name);
     return 0;
 }
 
 
-static int sort_block(int n_files,
-                      size_t k,
-                      Gn_sort_record_p *buf,
-                      const char *prefix,
-                      int n_threads)
+static int sort_blocks(int n_files,
+                       size_t k,
+                       Gn_sort_record_p *buf,
+                       const char *prefix,
+                       int n_threads)
 {
     int i;
     size_t rest;
@@ -147,7 +147,7 @@ static int sort_block(int n_files,
     return n_files + n_threads;
 }
 
-int goon_sort_core(FILE *f, const char *prefix, Gn_sort_conf *conf)
+int goon_sort_core(FILE *f, Gn_sort_conf *conf)
 {
     char *seq_needle,
          *start_needle,
@@ -201,7 +201,13 @@ int goon_sort_core(FILE *f, const char *prefix, Gn_sort_conf *conf)
         k += 1;
 
         if (mem >= max_mem) {
-            n_files = sort_blocks(n_files, k, buf, prefix, n_threads);
+            printf("mem=%lu, max_mem=%lu\n", mem, max_mem);
+            n_files = sort_blocks(n_files,
+                                  k, 
+                                  buf, 
+                                  conf->prefix, 
+                                  conf->n_threads);
+            mem = k = 0;
         }
     }
 
@@ -211,6 +217,12 @@ int goon_sort_core(FILE *f, const char *prefix, Gn_sort_conf *conf)
             printf("%s", buf[i]->json);
         }
     } else {
+        n_files = sort_blocks(n_files,
+                              k,
+                              buf,
+                              conf->prefix,
+                              conf->n_threads);
+        fprintf(stderr, "[goon_sort_core] merging %d files\n", n_files);
 
     }
 
