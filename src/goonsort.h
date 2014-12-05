@@ -29,7 +29,8 @@ typedef Gn_sort_record_t *Gn_sort_record_p;
 typedef struct {
     char *seq_key,
          *start_key,
-         *prefix;
+         *prefix,
+         *outfile;
     size_t max_mem;
     int n_threads;
 } Gn_sort_conf;

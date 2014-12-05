@@ -17,8 +17,9 @@ static void usage(char *prog)
     fprintf(stderr, "    -m/--maxmem     maximal amount of memory per thread "
                                          "(suffixes K/M/G recognized; "
                                          "default=%luM)\n", MAX_MEM_MB_DEFAULT);
-    fprintf(stderr, "    -p/--prefix     temp file prefix (default=%s)\n",
+    fprintf(stderr, "    -p/--prefix     temp file prefix (default='%s')\n",
                                          TEMP_FILE_PREFIX_DEFAULT);
+    fprintf(stderr, "    -o/--outfile    name of output bgzip file\n");
     fprintf(stderr, "    -h/--help       display help\n");
     fprintf(stderr, "\n");
 }
@@ -26,7 +27,7 @@ static void usage(char *prog)
 static void gn_conf_init(Gn_sort_conf *conf)
 {
     conf->max_mem = MAX_MEM_MB_DEFAULT << 20;
-    conf->seq_key = conf->start_key = conf->prefix = NULL;
+    conf->seq_key = conf->start_key = conf->prefix = conf->outfile = NULL;
     conf->n_threads = 1;
 }
 
@@ -38,6 +39,7 @@ int goonsort(int argc, char *argv[])
         {"threads", required_argument, NULL, 't'},
         {"mem", required_argument, NULL, 'm'},
         {"prefix", required_argument, NULL, 'p'},
+        {"outfile", required_argument, NULL, 'o'},
         {"help", no_argument, NULL, 'h'},
         {NULL, 0, NULL, 0}
     };
@@ -55,7 +57,7 @@ int goonsort(int argc, char *argv[])
 
     while ((c = getopt_long(argc,
                             argv,
-                            "s:b:t:m:p:h",
+                            "s:b:t:m:p:o:h",
                             opts,
                             NULL)) != -1) {
         switch (c) {
@@ -80,6 +82,8 @@ int goonsort(int argc, char *argv[])
                           break;
                       }
             case 'p': conf.prefix = optarg;
+                      break;
+            case 'o': conf.outfile = optarg;
                       break;
             default: return -1;
         }
