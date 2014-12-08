@@ -59,7 +59,7 @@ def fromldj(sep, colnames, na, fn):
         print(sep.join(colnames))
         for line in f:
             d = json.loads(line)
-            print(sep.join(d.get(c, na) for c in colnames))
+            print(sep.join(str(d.get(c, na)) for c in colnames))
 
 cli.add_command(toldj)
 cli.add_command(fromldj)
