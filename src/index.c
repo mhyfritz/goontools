@@ -847,6 +847,16 @@ ti_iter_t ti_queryi(tabix_t *t, int tid, int beg, int end)
     return ti_iter_query(t->idx, tid, beg, end);
 }
 
+ti_iter_t ti_query(tabix_t *t, const char *name, int beg, int end)
+{
+    int tid;
+    if (name == 0) return ti_iter_first();
+    // then need to load the index
+    if (ti_lazy_index_load(t) != 0) return 0;
+    if ((tid = ti_get_tid(t->idx, name)) < 0) return 0;
+    return ti_iter_query(t->idx, tid, beg, end);
+}
+
 const char *ti_read(tabix_t *t, ti_iter_t iter, int *len)
 {
     return ti_iter_read(t->fp, iter, len);
