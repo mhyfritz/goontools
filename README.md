@@ -69,7 +69,7 @@ START_KEY      chromStart
 END_KEY        chromEnd
 ZERO_BASED     true
 RIGHT_OPEN     true
-# by default `view` assumes position encoding from original file, i.e. 0-based, half-open here
+# get chromosome 1 records
 $ goontools view bed.srt.ldj.gz 1
 {"chromEnd": 11, "name": "name_6", "score": 711, "chromStart": 1, "chrom": "1", "strand": "+"}
 {"chromEnd": 7, "name": "name_33", "score": 290, "chromStart": 2, "chrom": "1", "strand": "+"}
@@ -84,6 +84,8 @@ $ goontools view bed.srt.ldj.gz 1
 {"chromEnd": 14, "name": "name_16", "score": 364, "chromStart": 10, "chrom": "1", "strand": "+"}
 {"chromEnd": 19, "name": "name_32", "score": 371, "chromStart": 10, "chrom": "1", "strand": "-"}
 {"chromEnd": 18, "name": "name_34", "score": 628, "chromStart": 10, "chrom": "1", "strand": "-"}
+# get intersecting intervals
+# by default `view` assumes position encoding from original file, i.e. 0-based, half-open here
 $ goontools view bed.srt.ldj.gz 1:7-10
 {"chromEnd": 11, "name": "name_6", "score": 711, "chromStart": 1, "chrom": "1", "strand": "+"}
 {"chromEnd": 8, "name": "name_11", "score": 375, "chromStart": 4, "chrom": "1", "strand": "-"}
