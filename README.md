@@ -41,7 +41,7 @@ In particular, following commands are currently implemented:
 
 Let's take a look at *test.ldj* from the *example* directory:
 
-~~~
+~~~bash
 $ head -1 test.ldj
 {"KEY3": "qux0", "KEY2": "baz0", "KEY1": "bar0", "KEY0": "foo0", "POS": 5, "CHROM": "chr3"}
 # only one position, so no END key needed:
