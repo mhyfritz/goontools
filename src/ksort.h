@@ -64,6 +64,8 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "goonsort.h"
+
 typedef struct {
 	void *left, *right;
 	int depth;
@@ -125,7 +127,11 @@ typedef struct {
 		size_t k = i;													\
 		type_t tmp = l[i];												\
 		while ((k = (k << 1) + 1) < n) {								\
-			if (k != n - 1 && __sort_lt(l[k], l[k+1])) ++k;				\
+			if (k != n - 1) {                                           \
+                if (__sort_lt(l[k], l[k+1])) {                          \
+                    ++k;                                                \
+                }                                                       \
+            }                                                           \
 			if (__sort_lt(l[k], tmp)) break;							\
 			l[i] = l[k]; i = k;											\
 		}																\
@@ -134,8 +140,9 @@ typedef struct {
 	void ks_heapmake_##name(size_t lsize, type_t l[])					\
 	{																	\
 		size_t i;														\
-		for (i = (lsize >> 1) - 1; i != (size_t)(-1); --i)				\
+		for (i = (lsize >> 1) - 1; i != (size_t)(-1); --i) {            \
 			ks_heapadjust_##name(i, lsize, l);							\
+        }                                                               \
 	}																	\
 	void ks_heapsort_##name(size_t lsize, type_t l[])					\
 	{																	\
