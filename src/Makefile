@@ -11,7 +11,7 @@ OBJ = $(SRC:.c=.o)
 GOONSUBSRC = $(filter-out $(PROG).c,$(wildcard goon*.c))
 PROTO = $(GOONSUBSRC:.c=.p)
 
-.PHONY: all clean
+.PHONY: all clean force
 
 all: $(PROTO) $(PROG)
 
@@ -23,3 +23,5 @@ $(PROTO): %.p: %.c
 
 clean:
 	$(RM) $(PROTO) $(OBJ) $(PROG)
+
+force: clean all
