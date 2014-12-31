@@ -7,12 +7,13 @@ static void usage(char *prog)
 {
     fprintf(stderr, "\n");
     fprintf(stderr, "Usage: %s [arguments] <goonfile> "
-                    "<key1> [key2 ... ]]\n", prog);
+                    "<key1> [key2 ... ]\n", prog);
     fprintf(stderr, "\n");
     fprintf(stderr, "arguments:\n");
-    fprintf(stderr, "    -d/--delim  field delimiter\n");
-    fprintf(stderr, "    -n/--null   null value\n");
-    fprintf(stderr, "    -h/--help   display help\n");
+    fprintf(stderr, "    -d/--delim   field delimiter\n");
+    fprintf(stderr, "    -n/--null    null value\n");
+    fprintf(stderr, "    -e/--header  print header\n");
+    fprintf(stderr, "    -h/--help    display help\n");
     fprintf(stderr, "\n");
 }
 
@@ -25,7 +26,8 @@ int goonextract(int argc, char *argv[])
         {NULL, 0, NULL, 0}
     };
     int c,
-        i;
+        i,
+        header = 0;
     char *d = DEFAULT_DELIMITER,
          *null = NULL,
          line[65536]; // FIXME
@@ -33,14 +35,14 @@ int goonextract(int argc, char *argv[])
     kson_t *kson = 0;
     const kson_node_t *p;
     
-    if (argc < 2) {
+    if (argc < 3) {
         USAGE;
         return -1;
     }
 
     while ((c = getopt_long(argc,
                             argv,
-                            "d:n:h",
+                            "d:n:eh",
                             opts,
                             NULL)) != -1) {
         switch (c) {
@@ -49,6 +51,8 @@ int goonextract(int argc, char *argv[])
             case 'd': d = optarg;
                       break;
             case 'n': null = optarg;
+                      break;
+            case 'e': header = 1;
                       break;
             default: return -1;
         }        
@@ -66,6 +70,16 @@ int goonextract(int argc, char *argv[])
             fprintf(stderr, "error: cannot open file %s\n", argv[optind]);
             return -1;
         }
+    }
+
+    if (header) {
+        for (i = optind + 1; i < argc; i += 1) {
+            if (i > optind + 1) {
+                printf("%s", d);
+            }
+            printf("%s", argv[i]);
+        }
+        printf("\n");
     }
 
     while(fgets(line, 65536, fp) != NULL) {
