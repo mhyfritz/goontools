@@ -366,13 +366,14 @@ int goon_sort_core(FILE *f, Gn_sort_conf *conf)
             printf("%s", buf[i]->json);
         }
     } else {
-        char **fns = (char **)calloc(n_files, sizeof(char*));
+        char **fns;
         // sort & spill last chunk
         n_files = sort_blocks(n_files,
                               k,
                               buf,
                               conf->prefix,
                               conf->n_threads);
+        fns = (char **)calloc(n_files, sizeof(char*));
         fprintf(stderr, "[goon_sort_core] merging %d files\n", n_files);
         for (i = 0; i < n_files; i += 1) {
             fns[i] = construct_tmp_fname(conf->prefix, i);
