@@ -57,9 +57,6 @@ static int retrieve_regions(tabix_t *t,
                 fputs(s, stdout); fputc('\n', stdout);
             }
             ti_iter_destroy(iter);
-        } else {
-            fprintf(stderr, "error: cannot parse region '%s'\n", regions[i]);
-            return -1;
         }
     }        
 
