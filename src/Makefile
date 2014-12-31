@@ -4,14 +4,14 @@ CC = gcc
 CFLAGS = -g -Wall -O2 -fPIC 
 CPPFLAGS = -D_FILE_OFFSET_BITS=64 -DBGZF_CACHE
 LD = $(CC)
-LDFLAGS = -lz
+LDFLAGS = -lz -lpthread
 
 SRC = $(wildcard *.c)
 OBJ = $(SRC:.c=.o)
 GOONSUBSRC = $(filter-out $(PROG).c,$(wildcard goon*.c))
 PROTO = $(GOONSUBSRC:.c=.p)
 
-.PHONY: all clean
+.PHONY: all clean force
 
 all: $(PROTO) $(PROG)
 
@@ -23,3 +23,5 @@ $(PROTO): %.p: %.c
 
 clean:
 	$(RM) $(PROTO) $(OBJ) $(PROG)
+
+force: clean all

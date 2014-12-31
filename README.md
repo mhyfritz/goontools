@@ -39,37 +39,72 @@ In particular, following commands are currently implemented:
 * `view`
 * `idxstat`
 
-Let's take a look at *test.ldj* from the *example* directory:
+Let's take a look at *bed.ldj* from the *example* directory:
 
-~~~
-$ head -1 test.ldj
-{"KEY3": "qux0", "KEY2": "baz0", "KEY1": "bar0", "KEY0": "foo0", "POS": 5, "CHROM": "chr3"}
-# only one position, so no END key needed:
-$ goontools sort -s CHROM -b POS test.ldj > test.srt.ldj
-$ bgzip test.srt.ldj
-# zero-based positions, i.e. pass `-0`
-$ goontools index -s CHROM -b POS -0 test.srt.ldj.gz
+~~~bash
+# first record; ldjpp.py can be found in util/
+$ head -1 bed.ldj | ldjpp.py -
+{
+  "chromEnd": 5,
+  "name": "name_0",
+  "score": 426,
+  "chromStart": 0,
+  "chrom": "10",
+  "strand": "-"
+}
+# sort and bgzip file:
+$ goontools sort -s chrom -b chromStart bed.ldj > bed.srt.ldj
+$ bgzip bed.srt.ldj
+# positions are zero-based and "right-open" (non-inclusive end)
+$ goontools index -0 -r -s chrom -b chromStart -e chromEnd bed.srt.ldj.gz
 # check what we've indexed
-$ goontools idxstat test.srt.ldj.gz
-SEQUENCE_NAME  chr1
-SEQUENCE_NAME  chr12
-SEQUENCE_NAME  chr3
-SEQUENCE_NAME  chrX
-SEQUENCE_KEY   CHROM
-START_KEY      POS
-END_KEY
+$ goontools idxstat bed.srt.ldj.gz
+SEQUENCE_NAME  1
+SEQUENCE_NAME  10
+SEQUENCE_NAME  11
+SEQUENCE_NAME  3
+SEQUENCE_NAME  X
+SEQUENCE_KEY   chrom
+START_KEY      chromStart
+END_KEY        chromEnd
 ZERO_BASED     true
-RIGHT_OPEN     false
-# by default `view` assumes position encoding from original file, i.e. 0-based, closed here
-$ goontools view test.srt.ldj.gz chr1
-{"KEY3": "qux17", "KEY2": "baz17", "KEY1": "bar17", "KEY0": "foo17", "POS": 0, "CHROM": "chr1"}
-{"KEY3": "qux2", "KEY2": "baz2", "KEY1": "bar2", "KEY0": "foo2", "POS": 9, "CHROM": "chr1"}
-{"KEY3": "qux7", "KEY2": "baz7", "KEY1": "bar7", "KEY0": "foo7", "POS": 9, "CHROM": "chr1"}
-$ goontools view test.srt.ldj.gz chr1:0-8
-{"KEY3": "qux17", "KEY2": "baz17", "KEY1": "bar17", "KEY0": "foo17", "POS": 0, "CHROM": "chr1"}
-$ goontools view test.srt.ldj.gz chr1:9
-{"KEY3": "qux2", "KEY2": "baz2", "KEY1": "bar2", "KEY0": "foo2", "POS": 9, "CHROM": "chr1"}
-{"KEY3": "qux7", "KEY2": "baz7", "KEY1": "bar7", "KEY0": "foo7", "POS": 9, "CHROM": "chr1"}
+RIGHT_OPEN     true
+# get chromosome 1 records
+$ goontools view bed.srt.ldj.gz 1
+{"chromEnd": 11, "name": "name_6", "score": 711, "chromStart": 1, "chrom": "1", "strand": "+"}
+{"chromEnd": 7, "name": "name_33", "score": 290, "chromStart": 2, "chrom": "1", "strand": "+"}
+{"chromEnd": 4, "name": "name_49", "score": 923, "chromStart": 2, "chrom": "1", "strand": "-"}
+{"chromEnd": 8, "name": "name_11", "score": 375, "chromStart": 4, "chrom": "1", "strand": "-"}
+{"chromEnd": 9, "name": "name_37", "score": 669, "chromStart": 4, "chrom": "1", "strand": "-"}
+{"chromEnd": 12, "name": "name_39", "score": 620, "chromStart": 4, "chrom": "1", "strand": "-"}
+{"chromEnd": 14, "name": "name_21", "score": 402, "chromStart": 5, "chrom": "1", "strand": "-"}
+{"chromEnd": 7, "name": "name_44", "score": 725, "chromStart": 6, "chrom": "1", "strand": "-"}
+{"chromEnd": 14, "name": "name_19", "score": 593, "chromStart": 7, "chrom": "1", "strand": "-"}
+{"chromEnd": 17, "name": "name_5", "score": 392, "chromStart": 10, "chrom": "1", "strand": "-"}
+{"chromEnd": 14, "name": "name_16", "score": 364, "chromStart": 10, "chrom": "1", "strand": "+"}
+{"chromEnd": 19, "name": "name_32", "score": 371, "chromStart": 10, "chrom": "1", "strand": "-"}
+{"chromEnd": 18, "name": "name_34", "score": 628, "chromStart": 10, "chrom": "1", "strand": "-"}
+# get intersecting intervals
+# by default `view` assumes position encoding from original file, i.e. 0-based, half-open here
+$ goontools view bed.srt.ldj.gz 1:7-10
+{"chromEnd": 11, "name": "name_6", "score": 711, "chromStart": 1, "chrom": "1", "strand": "+"}
+{"chromEnd": 8, "name": "name_11", "score": 375, "chromStart": 4, "chrom": "1", "strand": "-"}
+{"chromEnd": 9, "name": "name_37", "score": 669, "chromStart": 4, "chrom": "1", "strand": "-"}
+{"chromEnd": 12, "name": "name_39", "score": 620, "chromStart": 4, "chrom": "1", "strand": "-"}
+{"chromEnd": 14, "name": "name_21", "score": 402, "chromStart": 5, "chrom": "1", "strand": "-"}
+{"chromEnd": 14, "name": "name_19", "score": 593, "chromStart": 7, "chrom": "1", "strand": "-"}
+# but we can also use different encoding, e.g. pass a closed interval
+$ goontools view -c bed.srt.ldj.gz 1:7-10
+{"chromEnd": 11, "name": "name_6", "score": 711, "chromStart": 1, "chrom": "1", "strand": "+"}
+{"chromEnd": 8, "name": "name_11", "score": 375, "chromStart": 4, "chrom": "1", "strand": "-"}
+{"chromEnd": 9, "name": "name_37", "score": 669, "chromStart": 4, "chrom": "1", "strand": "-"}
+{"chromEnd": 12, "name": "name_39", "score": 620, "chromStart": 4, "chrom": "1", "strand": "-"}
+{"chromEnd": 14, "name": "name_21", "score": 402, "chromStart": 5, "chrom": "1", "strand": "-"}
+{"chromEnd": 14, "name": "name_19", "score": 593, "chromStart": 7, "chrom": "1", "strand": "-"}
+{"chromEnd": 17, "name": "name_5", "score": 392, "chromStart": 10, "chrom": "1", "strand": "-"}
+{"chromEnd": 14, "name": "name_16", "score": 364, "chromStart": 10, "chrom": "1", "strand": "+"}
+{"chromEnd": 19, "name": "name_32", "score": 371, "chromStart": 10, "chrom": "1", "strand": "-"}
+{"chromEnd": 18, "name": "name_34", "score": 628, "chromStart": 10, "chrom": "1", "strand": "-"}
 ~~~
 
 `goontools` takes inspiration from `tabix`[1] and `samtools`[2].

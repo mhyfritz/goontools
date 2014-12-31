@@ -6,7 +6,8 @@
 static void usage(char *prog)
 {
     fprintf(stderr, "\n");
-    fprintf(stderr, "Usage: %s [arguments] <goon.bgz> <region1> [[region2]...]\n", prog);
+    fprintf(stderr, "Usage: %s [arguments] <goon.bgz> "
+                    "[region1 [region2 ... ]]\n", prog);
     fprintf(stderr, "\n");
     fprintf(stderr, "arguments:\n");
     fprintf(stderr, "    -0/--zerobased  zero-based positions\n");
@@ -14,6 +15,19 @@ static void usage(char *prog)
     fprintf(stderr, "    -r/--rightopen  right-open positions\n");
     fprintf(stderr, "    -c/--closed     closed positions\n");
     fprintf(stderr, "\n");
+}
+
+static void retrieve_all(tabix_t *t)
+{
+    ti_iter_t iter;
+    const char *s;
+    int len;
+
+    iter = ti_query(t, 0, 0, 0);
+    while ((s = ti_read(t, iter, &len)) != 0) {
+        fputs(s, stdout); fputc('\n', stdout);
+    }
+    ti_iter_destroy(iter);
 }
 
 static int retrieve_regions(tabix_t *t,
@@ -46,7 +60,7 @@ static int retrieve_regions(tabix_t *t,
         }
     }        
 
-    return -1;
+    return 0;
 }
 
 int goonview(int argc, char *argv[])
@@ -69,7 +83,7 @@ int goonview(int argc, char *argv[])
 
     conf.zerobased = conf.onebased = conf.rightopen = conf.closed = 0;
 
-    if (argc < 3) {
+    if (argc == 1) {
         USAGE;
         return -1;
     }
@@ -92,12 +106,6 @@ int goonview(int argc, char *argv[])
                       return -1;
             default: return -1;
         }
-    }
-
-    if (optind >= argc) {
-        fprintf(stderr, "error: missing arguments\n");
-        USAGE;
-        return -1;
     }
 
     if (conf.zerobased == 1 && conf.onebased == 1) {
@@ -144,6 +152,11 @@ int goonview(int argc, char *argv[])
     if (ti_lazy_index_load(t) < 0) {
         fprintf(stderr,"error: failed to load the index file.\n");
         return -1;
+    }
+
+    if (optind == argc - 1) {
+        retrieve_all(t);
+        return EXIT_SUCCESS;
     }
 
     ti_conf = ti_get_conf(t->idx);
