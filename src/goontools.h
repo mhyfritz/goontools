@@ -9,6 +9,7 @@
 #include "goonsort.h"
 #include "goonview.h"
 #include "goonidxstat.h"
+#include "goonextract.h"
 
 typedef int (*Subcommand)(int, char**);
 

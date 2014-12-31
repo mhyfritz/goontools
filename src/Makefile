@@ -6,7 +6,7 @@ CPPFLAGS = -D_FILE_OFFSET_BITS=64 -DBGZF_CACHE
 LD = $(CC)
 LDFLAGS = -lz -lpthread
 
-SRC = $(wildcard *.c)
+SRC = $(wildcard *.c) klib/kson.c
 OBJ = $(SRC:.c=.o)
 GOONSUBSRC = $(filter-out $(PROG).c,$(wildcard goon*.c))
 PROTO = $(GOONSUBSRC:.c=.p)
