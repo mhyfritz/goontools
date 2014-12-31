@@ -29,8 +29,8 @@
 #define __TABIDX_H
 
 #include <stdint.h>
-#include "kstring.h"
-#include "khash.h"
+#include "klib/kstring.h"
+#include "klib/khash.h"
 #include "bgzf.h"
 
 #define IDX_EXT ".gni"

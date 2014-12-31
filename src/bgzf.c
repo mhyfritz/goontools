@@ -76,7 +76,7 @@ typedef struct {
 	uint8_t *block;
 	int64_t end_offset;
 } cache_t;
-#include "khash.h"
+#include "klib/khash.h"
 KHASH_MAP_INIT_INT64(cache, cache_t)
 #endif
 

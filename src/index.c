@@ -1,8 +1,8 @@
 #include <assert.h>
 #include <sys/stat.h>
 #include <ctype.h>
-#include "khash.h"
-#include "ksort.h"
+#include "klib/khash.h"
+#include "klib/ksort.h"
 #include "tabix.h"
 
 #define TAD_MIN_CHUNK_GAP 32768
