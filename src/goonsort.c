@@ -3,8 +3,6 @@
 #define PROG_ALIAS "goonsort"
 #define USAGE usage(PROG_ALIAS)
 
-ARRAY_DECLARE(Gn_sort_record_t);
-
 static void usage(char *prog)
 {
     fprintf(stderr, "\n");
