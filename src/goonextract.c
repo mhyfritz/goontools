@@ -11,6 +11,7 @@ static void usage(char *prog)
     fprintf(stderr, "\n");
     fprintf(stderr, "arguments:\n");
     fprintf(stderr, "    -d/--delim  field delimiter character\n");
+    fprintf(stderr, "    -n/--null   null value\n");
     fprintf(stderr, "    -h/--help   display help\n");
     fprintf(stderr, "\n");
 }
@@ -19,12 +20,14 @@ int goonextract(int argc, char *argv[])
 {
     struct option opts[] = {
         {"delim", required_argument, NULL, 'd'},
+        {"null", required_argument, NULL, 'n'},
         {"help", no_argument, NULL, 'h'},
         {NULL, 0, NULL, 0}
     };
     int c,
         i;
     char *d = DEFAULT_DELIMITER,
+         *null = NULL,
          line[65536]; // FIXME
     FILE *fp;
     kson_t *kson = 0;
@@ -37,13 +40,15 @@ int goonextract(int argc, char *argv[])
 
     while ((c = getopt_long(argc,
                             argv,
-                            "d:h",
+                            "d:n:h",
                             opts,
                             NULL)) != -1) {
         switch (c) {
             case 'h': USAGE;
                       return -1;
             case 'd': d = optarg;
+                      break;
+            case 'n': null = optarg;
                       break;
             default: return -1;
         }        
@@ -68,18 +73,18 @@ int goonextract(int argc, char *argv[])
         if (kson) {
             for (i = optind + 1; i < argc; i += 1) {
                 p = kson_by_key(kson->root, argv[i]);
-                if (!p) {
+                if (!p && !null) {
                     fprintf(stderr, "error: cannot find key %s\n", argv[i]);
                     return -1;
                 }
-                if (kson_is_internal(p)) {
+                if (p && kson_is_internal(p)) {
                     fprintf(stderr, "error: compound value %s\n", argv[i]);
                     return -1;
                 }
                 if (i > optind + 1) {
                     printf("%s", d);
                 }
-                printf("%s", p->v.str);
+                printf("%s", p ? p->v.str : null);
             }
             printf("\n");
         } else {
