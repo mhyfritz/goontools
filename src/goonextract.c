@@ -10,7 +10,7 @@ static void usage(char *prog)
                     "<key1> [key2 ... ]]\n", prog);
     fprintf(stderr, "\n");
     fprintf(stderr, "arguments:\n");
-    fprintf(stderr, "    -d/--delim  field delimiter character\n");
+    fprintf(stderr, "    -d/--delim  field delimiter\n");
     fprintf(stderr, "    -n/--null   null value\n");
     fprintf(stderr, "    -h/--help   display help\n");
     fprintf(stderr, "\n");
