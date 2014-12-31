@@ -8,7 +8,7 @@ void usage(char* prog)
     fprintf(stderr, "subcommands:\n");
     fprintf(stderr, "    index      index file\n");
     fprintf(stderr, "    sort       sort file\n");
-    fprintf(stderr, "    view       view/slice file\n");
+    fprintf(stderr, "    view       view/subset file\n");
     fprintf(stderr, "    idxstat    print index information\n");
     fprintf(stderr, "    extract    extract selected portions (experimental)\n");
     fprintf(stderr, "\n");
