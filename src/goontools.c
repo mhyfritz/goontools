@@ -10,7 +10,7 @@ void usage(char* prog)
     fprintf(stderr, "    sort       sort file\n");
     fprintf(stderr, "    view       view file / subset lines\n");
     fprintf(stderr, "    idxstat    print index information\n");
-    fprintf(stderr, "    extract    extract record portions (experimental)\n");
+    fprintf(stderr, "    extract    extract record values (experimental)\n");
     fprintf(stderr, "\n");
 }
 
