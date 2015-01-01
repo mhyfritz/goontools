@@ -53,7 +53,11 @@ int goonextract(int argc, char *argv[])
         switch (c) {
             case 'h': USAGE;
                       return -1;
-            case 'p': path.start = optind - 1;
+            case 'p': if (optind == argc) {
+                          fprintf(stderr, "error: missing file name\n"); 
+                          return -1;
+                      }
+                      path.start = optind - 1;
                       for (i = path.start;
                            i < argc - 1 && argv[i][0] != '-';
                            i += 1) {
@@ -63,7 +67,11 @@ int goonextract(int argc, char *argv[])
                       ARRAY_PUSH(&paths, Path, path);
                       optind = i;
                       break;
-            case 'd': d = optarg;
+            case 'd': if (optind == argc) {
+                          fprintf(stderr, "error: missing file name\n");
+                          return -1;
+                      }
+                      d = optarg;
                       break;
             case 'n': null = optarg;
                       break;
@@ -81,7 +89,7 @@ int goonextract(int argc, char *argv[])
         fp = stdin;
     } else {
         if ((fp = fopen(argv[argc-1], "r")) == NULL) {
-            fprintf(stderr, "error: cannot open file %s\n", argv[argc-1]);
+            fprintf(stderr, "error: cannot open file '%s'\n", argv[argc-1]);
             return -1;
         }
     }
@@ -97,18 +105,21 @@ int goonextract(int argc, char *argv[])
                         p = kson_by_index(p, atoi(argv[j]));
                     } else if (p->type == KSON_TYPE_BRACE) {
                         p = kson_by_key(p, argv[j]);
-                    } else {
-                        p = NULL;
+                    } 
+                    if (!p && j < path.end){
+                        // FIXME print path
+                        fprintf(stderr, "error cannot resolve path\n");
+                        return -1;
                     }
                 }
                 if (!p && !null) {
                     fprintf(stderr, "error: cannot find '%s'\n",
-                            argv[j]);
+                            argv[path.end]);
                     return -1;
                 }
                 if (p && kson_is_internal(p)) {
                     fprintf(stderr, "error: compound value '%s'\n",
-                            argv[j]);
+                            argv[path.end]);
                     return -1;
                 }
                 printf("%s%s", i > 0 ? d : "", p ? p->v.str : null);
