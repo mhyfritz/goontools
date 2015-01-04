@@ -1,6 +1,8 @@
 #ifndef ARRAY_H
 #define ARRAY_H
 
+#include <stdlib.h>
+
 #define ARRAY_DECLARE(TYPE) \
     typedef struct { \
         TYPE *elems; \
