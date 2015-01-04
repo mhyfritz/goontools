@@ -8,6 +8,7 @@
 #include "klib/kson.h"
 #include "bgzf.h"
 #include "array.h"
+#include "readline.h"
 
 #include "goonextract.p"
 

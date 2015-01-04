@@ -30,15 +30,16 @@ int goonextract(int argc, char *argv[])
         i,
         j;
     char *d = DEFAULT_DELIMITER,
-         *null = NULL,
-         line[65536]; // FIXME
+         *null = NULL;
     FILE *fp;
     kson_t *kson = 0;
     const kson_node_t *p;
     ArrayPath paths;
     Path path;
+    Line line;
     
     ARRAY_INIT(&paths, Path, 64);
+    init_line(&line);
 
     if (argc == 1) {
         USAGE;
@@ -94,8 +95,8 @@ int goonextract(int argc, char *argv[])
         }
     }
 
-    while(fgets(line, 65536, fp) != NULL) {
-        kson = kson_parse(line);
+    while (readline(fp, &line) > 0) {
+        kson = kson_parse(line.elems);
         if (kson) {
             for (i = 0; i < paths.nextfree; i += 1) {
                 p = kson->root;
@@ -126,7 +127,7 @@ int goonextract(int argc, char *argv[])
                 }
             printf("\n");
         } else {
-            fprintf(stderr, "cannot parse line: %s", line);
+            fprintf(stderr, "cannot parse line: %s", line.elems);
             return -1;
         }
     }
@@ -134,6 +135,7 @@ int goonextract(int argc, char *argv[])
     fclose(fp);
     kson_destroy(kson);
     ARRAY_FREE(&paths);
+    free_line(&line);
 
     return 0;
 }
