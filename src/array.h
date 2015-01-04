@@ -15,11 +15,14 @@
     (A)->allocated = SIZE; \
     (A)->nextfree = 0
 
-#define ARRAY_PUSH(A, TYPE, VALUE) \
+#define ARRAY_REALLOC_CHECK(A, TYPE) \
     if ((A)->allocated == (A)->nextfree) { \
         (A)->allocated *= 2; \
         (A)->elems = (TYPE*)realloc((A)->elems, (A)->allocated * sizeof(TYPE)); \
     } \
+
+#define ARRAY_PUSH(A, TYPE, VALUE) \
+    ARRAY_REALLOC_CHECK(A, TYPE); \
     (A)->elems[(A)->nextfree] = VALUE; \
     (A)->nextfree += 1
 
