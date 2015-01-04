@@ -299,12 +299,14 @@ int goon_merge_core(int n,
 int goon_sort_core(FILE *f, Gn_sort_conf *conf)
 {
     char *seq_needle,
-         *start_needle,
-         line[65536]; // FIXME hello, overflow
+         *start_needle;
     size_t mem, max_k, k, max_mem;
     int n_files;
     Gn_sort_record_p b, *buf = NULL;
     int i;
+    Line line;
+
+    init_line(&line);
 
     max_k = k = mem = 0;
     max_mem = conf->max_mem * conf->n_threads;
@@ -325,9 +327,11 @@ int goon_sort_core(FILE *f, Gn_sort_conf *conf)
             memset(buf + old_max, 0, sizeof(Gn_sort_record_p) * (max_k - old_max));
         }
 
-        if (fgets(line, 65536, f) == NULL) {
+        if (readline(f, &line) == 0) {
             break;
         } 
+
+        store_line_char(&line, '\n');
 
         if (buf[k] == 0) {
             buf[k] = (Gn_sort_record_p)calloc(1, sizeof(Gn_sort_record_t));
@@ -336,7 +340,7 @@ int goon_sort_core(FILE *f, Gn_sort_conf *conf)
         b = buf[k];
 
         if (construct_gn_sort_record(&b,
-                                     line,
+                                     line.elems,
                                      seq_needle,
                                      start_needle) != 0) {
             return -1;
@@ -392,6 +396,7 @@ int goon_sort_core(FILE *f, Gn_sort_conf *conf)
 
     free(seq_needle);
     free(start_needle);
+    free_line(&line);
 
     return 0;
 }

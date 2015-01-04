@@ -9,7 +9,7 @@
 #include <assert.h>
 #include <pthread.h>
 
-#include "array.h"
+#include "readline.h"
 #include "klib/ksort.h"
 #include "goon.h"
 #include "bgzf.h"
