@@ -327,11 +327,12 @@ int goon_sort_core(FILE *f, Gn_sort_conf *conf)
             memset(buf + old_max, 0, sizeof(Gn_sort_record_p) * (max_k - old_max));
         }
 
-        if (readline(f, &line) == 0) {
+        if (read_line(f, &line) == 0) {
             break;
         } 
 
         store_line_char(&line, '\n');
+        terminate_line(&line);
 
         if (buf[k] == 0) {
             buf[k] = (Gn_sort_record_p)calloc(1, sizeof(Gn_sort_record_t));
