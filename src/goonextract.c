@@ -95,7 +95,7 @@ int goonextract(int argc, char *argv[])
         }
     }
 
-    while (readline(fp, &line) > 0) {
+    while (read_line(fp, &line) > 0) {
         kson = kson_parse(line.elems);
         if (kson) {
             for (i = 0; i < paths.nextfree; i += 1) {
