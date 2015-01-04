@@ -1,7 +1,7 @@
 PROG = goontools
 
 CC = gcc
-CFLAGS = -g -Wall -O2 -fPIC 
+CFLAGS = -g -Wall -O3 -fPIC 
 CPPFLAGS = -D_FILE_OFFSET_BITS=64 -DBGZF_CACHE
 LD = $(CC)
 LDFLAGS = -lz -lpthread
