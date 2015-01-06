@@ -13,5 +13,6 @@ typedef Arraychar Line;
 #define line_realloc_check(L) ARRAY_REALLOC_CHECK(L, char)
 
 size_t read_line(FILE *fp, Line *line);
+void terminate_line(Line *line);
 
 #endif
