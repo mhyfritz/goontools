@@ -19,11 +19,6 @@
 #define MAX_MEM_MB_DEFAULT (size_t)756
 #define TEMP_FILE_PREFIX_DEFAULT "gnsrt"
 
-typedef struct {
-    uint32_t pos;
-    char *chrom;
-} Chrom_pos;
-
 #define POS_NULL UINT32_MAX
 
 typedef struct {

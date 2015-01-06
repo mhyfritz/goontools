@@ -13,62 +13,14 @@ static inline int sort_gn_record_lt(const Gn_sort_record_p a,
     return 0;
 }
 
-static Chrom_pos* get_chrom_pos(char *line,
-                                char *seq_needle,
-                                char *start_needle)
-{
-    Chrom_pos *chrom_pos;
-    char *str_p, *str_p2;
-    int seen_chrom, seen_start;
-
-    chrom_pos = calloc(1, sizeof(Chrom_pos));
-    seen_chrom = seen_start = 0;
-
-    for (str_p = line; *str_p != '\0'; str_p += 1) {
-        if (*str_p != '"') {
-            continue;
-        }
-        if (strncmp(str_p, seq_needle, strlen(seq_needle)) == 0) {
-            str_p += strlen(seq_needle);
-            skip_ws(&str_p);
-            assert(*str_p == '"');
-            str_p += 1;
-            for (str_p2 = str_p; *str_p2 != '\0' && *str_p2 != '"'; str_p2 += 1) {
-                // empty
-            }
-            assert(*str_p2 == '"');
-            chrom_pos->chrom = strndup(str_p, str_p2 - str_p);
-            str_p = str_p2 + 1;
-            seen_chrom = 1;
-        } else if (strncmp(str_p, start_needle, strlen(start_needle)) == 0) {
-            str_p += strlen(start_needle);
-            chrom_pos->pos = strtol(str_p, &str_p, 10);
-            seen_start = 1;
-        }
-        if (seen_chrom && seen_start) {
-            break;
-        }
-    }
-
-    if (!seen_chrom || !seen_start) {
-        if (seen_chrom) {
-            free(chrom_pos->chrom);
-        }
-        free(chrom_pos);
-        return NULL;
-    }
-
-    return chrom_pos;
-}
-
 static int construct_gn_sort_record(Gn_sort_record_p *r,
                                     char *line,
-                                    char *seq_needle,
-                                    char *start_needle)
+                                    char *seq_key,
+                                    char *start_key)
 {
-    if (((*r)->chrom_pos = get_chrom_pos(line,
-                                         seq_needle,
-                                         start_needle)) == NULL) {
+    if (((*r)->chrom_pos = get_chrom_pos_dirty(line,
+                                               seq_key,
+                                               start_key)) == NULL) {
         return -1;
     }
     (*r)->json = strdup(line);
@@ -210,12 +162,12 @@ static int construct_gn_merge_record(Gn_merge_record_p r,
                                      int i,
                                      size_t idx,
                                      char *line,
-                                     char *seq_needle,
-                                     char *start_needle)
+                                     char *seq_key,
+                                     char *start_key)
 {
-    if ((r->chrom_pos = get_chrom_pos(line,
-                                      seq_needle,
-                                      start_needle)) == NULL) {
+    if ((r->chrom_pos = get_chrom_pos_dirty(line,
+                                            seq_key,
+                                            start_key)) == NULL) {
         return -1;
     }
     r->json = strdup(line);
@@ -229,8 +181,8 @@ KSORT_INIT(heap, Gn_merge_record_t, merge_gn_record_lt);
 
 int goon_merge_core(int n,
                     char * const *fns,
-                    char *seq_needle,
-                    char *start_needle)
+                    char *seq_key,
+                    char *start_key)
 {
     BGZF **fps;
     int i;
@@ -259,8 +211,8 @@ int goon_merge_core(int n,
                                   i,
                                   idx,
                                   str->s,
-                                  seq_needle,
-                                  start_needle);
+                                  seq_key,
+                                  start_key);
         idx += 1;
     }
 
@@ -274,8 +226,8 @@ int goon_merge_core(int n,
                                       heap->i,
                                       idx,
                                       str->s,
-                                      seq_needle,
-                                      start_needle);
+                                      seq_key,
+                                      start_key);
             idx += 1;
         } else {
             heap->chrom_pos->pos = HEAP_EMPTY;
@@ -298,8 +250,6 @@ int goon_merge_core(int n,
 
 int goon_sort_core(FILE *f, Gn_sort_conf *conf)
 {
-    char *seq_needle,
-         *start_needle;
     size_t mem, max_k, k, max_mem;
     int n_files;
     Gn_sort_record_p b, *buf = NULL;
@@ -311,13 +261,6 @@ int goon_sort_core(FILE *f, Gn_sort_conf *conf)
     max_k = k = mem = 0;
     max_mem = conf->max_mem * conf->n_threads;
     n_files = 0;
-
-    seq_needle = malloc(strlen(conf->seq_key) + 4);
-    start_needle = malloc(strlen(conf->start_key) + 4);
-
-    // FIXME need proper parser
-    sprintf(seq_needle, "\"%s\":", conf->seq_key);
-    sprintf(start_needle, "\"%s\":", conf->start_key);
 
     for (;;) {
         if (k == max_k) {
@@ -342,8 +285,8 @@ int goon_sort_core(FILE *f, Gn_sort_conf *conf)
 
         if (construct_gn_sort_record(&b,
                                      line.elems,
-                                     seq_needle,
-                                     start_needle) != 0) {
+                                     conf->seq_key,
+                                     conf->start_key) != 0) {
             return -1;
         }
 
@@ -384,7 +327,8 @@ int goon_sort_core(FILE *f, Gn_sort_conf *conf)
             fns[i] = construct_tmp_fname(conf->prefix, i);
         }
 
-        if (goon_merge_core(n_files, fns, seq_needle, start_needle) != 0) {
+        if (goon_merge_core(n_files, fns, conf->seq_key, conf->start_key) 
+                != 0) {
             return -1;
         }
 
@@ -395,8 +339,6 @@ int goon_sort_core(FILE *f, Gn_sort_conf *conf)
         free(fns);
     }
 
-    free(seq_needle);
-    free(start_needle);
     free_line(&line);
 
     return 0;
