@@ -9,7 +9,9 @@ static void usage(char *prog)
     fprintf(stderr, "Usage: %s <arguments> [goonfile]\n", prog);
     fprintf(stderr, "\n");
     fprintf(stderr, "arguments:\n");
-    fprintf(stderr, "    -i/--indent     indentation per level\n");
+    fprintf(stderr, "    -i/--indent     indentation per level "
+                    "(default: %d)\n",
+            GOON_PPRINT_DEFAULT_INDENT);
     fprintf(stderr, "    -h/--help       display help\n");
     fprintf(stderr, "\n");
 }
@@ -58,7 +60,7 @@ int goonpprint(int argc, char *argv[])
         {NULL, 0, NULL, 0}
     };
     struct stat f_stat;
-    int c, indent = 2;
+    int c, indent = GOON_PPRINT_DEFAULT_INDENT;
     FILE *f;
     Line line;
     kson_t *kson = NULL;

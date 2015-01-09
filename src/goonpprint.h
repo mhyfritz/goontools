@@ -11,4 +11,6 @@
 
 #include "goonpprint.p"
 
+#define GOON_PPRINT_DEFAULT_INDENT 2
+
 #endif
