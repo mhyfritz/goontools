@@ -6,6 +6,9 @@
 #include <getopt.h>
 #include <sys/stat.h>
 
+#include "readline.h"
+#include "klib/kson.h"
+
 #include "goonpprint.p"
 
 #endif

@@ -14,6 +14,43 @@ static void usage(char *prog)
     fprintf(stderr, "\n");
 }
 
+static void kson_dump_recur(const kson_node_t *p,
+                            FILE *fp,
+                            int indent,
+                            int depth)
+{
+    long i;
+
+    if (p->key) fprintf(fp, "\"%s\": ", p->key);
+    if (p->type == KSON_TYPE_BRACKET || p->type == KSON_TYPE_BRACE) {
+        fputc(p->type == KSON_TYPE_BRACKET? '[' : '{', fp);
+        if (p->n) {
+            fprintf(fp, "\n%*s", (depth+1) * indent, "");
+            for (i = 0; i < (long)p->n; ++i) {
+                if (i) {
+                    fputc(',', fp);
+                    fprintf(fp, "\n%*s", (depth+1) * indent, "");
+                }
+                kson_dump_recur(p->v.child[i], fp, indent, depth + 1);
+            }
+            fprintf(fp, "\n%*s", depth * indent, "");
+        }
+        fputc(p->type == KSON_TYPE_BRACKET? ']' : '}', fp);
+    } else {
+        if (p->type != KSON_TYPE_NO_QUOTE)
+            fputc(p->type == KSON_TYPE_SGL_QUOTE? '\'' : '"', fp);
+        fputs(p->v.str, fp);
+        if (p->type != KSON_TYPE_NO_QUOTE)
+            fputc(p->type == KSON_TYPE_SGL_QUOTE? '\'' : '"', fp);
+    } 
+}
+
+static void kson_dump(const kson_node_t *root, FILE *fp, int indent)
+{
+    kson_dump_recur(root, fp, indent, 0);
+    fputc('\n', fp);
+}
+
 int goonpprint(int argc, char *argv[])
 {
     struct option opts[] = {
@@ -24,6 +61,10 @@ int goonpprint(int argc, char *argv[])
     struct stat f_stat;
     int c, indent = 2;
     FILE *f;
+    Line line;
+    kson_t *kson = NULL;
+
+    init_line(&line);
 
     while ((c = getopt_long(argc,
                             argv,
@@ -33,6 +74,7 @@ int goonpprint(int argc, char *argv[])
         switch (c) {
             case 'h': USAGE;
                       return -1;
+            // TODO int check
             case 'i': indent = strtol(optarg, NULL, 0);
                       break;
             default: return -1;
@@ -58,9 +100,20 @@ int goonpprint(int argc, char *argv[])
         }
     }
 
+    while (read_line(f, &line) > 0) {
+        kson = kson_parse(line.elems);
+        if (!kson) {
+            fprintf(stderr, "cannot parse line: %s", line.elems);
+            return -1;
+        }
+        kson_dump(kson->root, stdout, indent);
+    }
+
     if (optind != argc) {
         fclose(f);
     }
+
+    free_line(&line);
 
     return 0;
 } 
