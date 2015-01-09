@@ -9,7 +9,7 @@ static void usage(char *prog)
     fprintf(stderr, "Usage: %s <arguments> [goonfile]\n", prog);
     fprintf(stderr, "\n");
     fprintf(stderr, "arguments:\n");
-    fprintf(stderr, "    -i/--indent     print indentation\n");
+    fprintf(stderr, "    -i/--indent     indentation per level\n");
     fprintf(stderr, "    -h/--help       display help\n");
     fprintf(stderr, "\n");
 }
@@ -28,8 +28,7 @@ static void kson_dump_recur(const kson_node_t *p,
             fprintf(fp, "\n%*s", (depth+1) * indent, "");
             for (i = 0; i < (long)p->n; ++i) {
                 if (i) {
-                    fputc(',', fp);
-                    fprintf(fp, "\n%*s", (depth+1) * indent, "");
+                    fprintf(fp, ",\n%*s", (depth+1) * indent, "");
                 }
                 kson_dump_recur(p->v.child[i], fp, indent, depth + 1);
             }
