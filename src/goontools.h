@@ -10,6 +10,7 @@
 #include "goonview.h"
 #include "goonidxstat.h"
 #include "goonextract.h"
+#include "goonpprint.h"
 
 typedef int (*Subcommand)(int, char**);
 
