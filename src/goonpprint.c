@@ -12,6 +12,7 @@ static void usage(char *prog)
     fprintf(stderr, "    -i/--indent     indentation per level "
                     "(default: %d)\n",
             GOON_PPRINT_DEFAULT_INDENT);
+    fprintf(stderr, "    -n/--num        number of records to print\n");
     fprintf(stderr, "    -h/--help       display help\n");
     fprintf(stderr, "\n");
 }
@@ -56,11 +57,14 @@ int goonpprint(int argc, char *argv[])
 {
     struct option opts[] = {
         {"indent", required_argument, NULL, 'i'},
+        {"num", required_argument, NULL, 'n'},
         {"help", no_argument, NULL, 'h'},
         {NULL, 0, NULL, 0}
     };
     struct stat f_stat;
-    int c, indent = GOON_PPRINT_DEFAULT_INDENT;
+    int c,
+        indent = GOON_PPRINT_DEFAULT_INDENT,
+        n = -1;
     FILE *f;
     Line line;
     kson_t *kson = NULL;
@@ -69,7 +73,7 @@ int goonpprint(int argc, char *argv[])
 
     while ((c = getopt_long(argc,
                             argv,
-                            "i:h",
+                            "i:n:h",
                             opts,
                             NULL)) != -1) {
         switch (c) {
@@ -77,6 +81,13 @@ int goonpprint(int argc, char *argv[])
                       return -1;
             // TODO int check
             case 'i': indent = strtol(optarg, NULL, 0);
+                      break;
+            case 'n': n = strtol(optarg, NULL, 0);
+                      if (n <= 0) {
+                        fprintf(stderr, "error: num has to be "
+                                        "positive integer\n");
+                        return -1;
+                      }
                       break;
             default: return -1;
         }
@@ -101,13 +112,16 @@ int goonpprint(int argc, char *argv[])
         }
     }
 
-    while (read_line(f, &line) > 0) {
+    while (read_line(f, &line) > 0 && n != 0) {
         kson = kson_parse(line.elems);
         if (!kson) {
             fprintf(stderr, "cannot parse line: %s", line.elems);
             return -1;
         }
         kson_dump(kson->root, stdout, indent);
+        if (n != -1) {
+            n -= 1;
+        }
     }
 
     if (optind != argc) {
