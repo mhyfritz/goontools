@@ -1,3 +1,5 @@
+NOTE: this is work in progess. Here be <del>dragons</del> bugs. Potentially.
+
 goontools
 =========
 
@@ -111,8 +113,6 @@ $ goontools view -c bed.srt.ldj.gz 1:7-10
 
 `goontools` takes inspiration and quite a bit of actual
 code from `tabix`[1] and `samtools`[2].
-
-NOTE: this is work in progess. Here be <del>dragons</del> bugs. Potentially.
 
 [1] http://samtools.sourceforge.net/
 
