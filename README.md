@@ -109,10 +109,8 @@ $ goontools view -c bed.srt.ldj.gz 1:7-10
 {"chromEnd": 18, "name": "name_34", "score": 628, "chromStart": 10, "chrom": "1", "strand": "-"}
 ~~~
 
-`goontools` takes inspiration from `tabix`[1] and `samtools`[2].
-A lot of inspiration. In fact, most heavy lifting is
-done using parts of their codebase.
-Kudos [Heng](http://en.wikipedia.org/wiki/Heng_Li)!
+`goontools` takes inspiration and quite a bit of actual
+code from `tabix`[1] and `samtools`[2].
 
 NOTE: this is work in progess. Here be <del>dragons</del> bugs. Potentially.
 
