@@ -97,7 +97,7 @@ $ goontools view bed.srt.ldj.gz 1:7-10
 {"chromEnd": 12, "name": "name_39", "score": 620, "chromStart": 4, "chrom": "1", "strand": "-"}
 {"chromEnd": 14, "name": "name_21", "score": 402, "chromStart": 5, "chrom": "1", "strand": "-"}
 {"chromEnd": 14, "name": "name_19", "score": 593, "chromStart": 7, "chrom": "1", "strand": "-"}
-# but we can also use different encoding, e.g. pass a closed interval
+# but we can also use a different encoding, e.g. pass a closed interval
 $ goontools view -c bed.srt.ldj.gz 1:7-10
 {"chromEnd": 11, "name": "name_6", "score": 711, "chromStart": 1, "chrom": "1", "strand": "+"}
 {"chromEnd": 8, "name": "name_11", "score": 375, "chromStart": 4, "chrom": "1", "strand": "-"}
