@@ -34,16 +34,18 @@ Back to `goontools`.
 `goontools` provides a set of commands to manipulate GOON files.
 In particular, following commands are currently implemented:
 
-* `sort`
 * `index`
+* `sort`
 * `view`
 * `idxstat`
+* `extract` (experimental)
+* `pprint`
 
 Let's take a look at *bed.ldj* from the *example* directory:
 
 ~~~bash
-# first record; ldjpp.py can be found in util/
-$ head -1 bed.ldj | ldjpp.py -
+# pretty-print first record
+$ goontools pprint -n 1 bed.ldj
 {
   "chromEnd": 5,
   "name": "name_0",
