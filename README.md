@@ -7,7 +7,7 @@ goontools
 
 GOON files?!
 
-GOON (GenOme jsON) is a simple, flexible format that is easy to process and extend.
+GOON (GenOme jsON) is a simple, flexible format that is easy to process, stream and extend.
 Its specification is the following:
 
 * a GOON file is a line-delimited JSON (LDJSON) file
